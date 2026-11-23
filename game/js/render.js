@@ -125,19 +125,43 @@
     setTimeout(function () { d.remove(); }, 1300);
   }
 
-  // Win-screen flourish: falling confetti pieces.
+  // Win-screen flourish: falling confetti pieces across the WHOLE screen.
+  // Live game: a fresh random scatter every win. ?shot=win: a fixed seed
+  // (mulberry32) so the screenshot is reproducible and shows a good spread
+  // on every capture. Pieces start mid-fall (negative animation-delay),
+  // so the screen is full of confetti from the first frame instead of
+  // only the top strip filling in slowly.
   function confetti() {
     var screen = el('end-screen');
-    var colors = ['#fbbf24', '#a855f7', '#e879f9', '#4ade80', '#38bdf8', '#ef4444'];
-    for (var i = 0; i < 70; i++) {
+    screen.classList.add('win-flourish');
+    var params = new URLSearchParams(window.location.search);
+    var seeded = params.get('shot') === 'win';
+    var seed = 20261123;
+    function rand() {
+      if (!seeded) return Math.random();
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+    var colors = ['#fbbf24', '#a855f7', '#e879f9', '#4ade80', '#38bdf8', '#ef4444', '#fde68a', '#ffffff'];
+    var COUNT = 130;
+    for (var i = 0; i < COUNT; i++) {
       var p = document.createElement('div');
       p.className = 'confetti';
-      p.style.left = (Math.random() * 100) + 'vw';
+      var dur = 3.0 + rand() * 2.5; // 3.0-5.5s fall: slow enough that a
+      // screenshot ~1s after load still catches most pieces mid-screen.
+      p.style.left = (rand() * 100) + 'vw';
+      p.style.width = (8 + Math.floor(rand() * 7)) + 'px';   // 8-14px wide
+      p.style.height = (10 + Math.floor(rand() * 9)) + 'px'; // 10-18px tall
       p.style.background = colors[i % colors.length];
-      p.style.animationDuration = (2.2 + Math.random() * 2.2) + 's';
-      p.style.animationDelay = (Math.random() * 0.9) + 's';
+      if (rand() < 0.25) p.style.borderRadius = '50%'; // some round pieces
+      p.style.animationDuration = dur + 's';
+      // Negative delay = piece starts part-way down its fall path.
+      p.style.animationDelay = (-rand() * dur * 0.8) + 's';
+      p.style.setProperty('--drift', (Math.floor(rand() * 81) - 40) + 'px');
       screen.appendChild(p);
-      (function (node) { setTimeout(function () { node.remove(); }, 6000); })(p);
+      (function (node) { setTimeout(function () { node.remove(); }, 8000); })(p);
     }
   }
 
@@ -145,6 +169,13 @@
     ['title-screen', 'game-screen', 'end-screen'].forEach(function (s) {
       el(s).classList.toggle('hidden', s !== id);
     });
+    // End-screen flourish hooks (presentation only): game.js sets the title
+    // class (win/lose) before calling this, so CSS can paint the right
+    // backdrop — gold halo + sparkles for a win, dim Void swirl for a loss.
+    var end = el('end-screen');
+    var titleCls = (el('end-title').className || '');
+    end.classList.toggle('win-flourish', id === 'end-screen' && titleCls.indexOf('win') !== -1);
+    end.classList.toggle('lose-emblem', id === 'end-screen' && titleCls.indexOf('lose') !== -1);
   }
 
   var api = {
