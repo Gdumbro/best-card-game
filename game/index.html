@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOID DECK — Every card can rewrite next round's rules</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ TITLE SCREEN ============ -->
+  <section id="title-screen" class="screen">
+    <div class="title-void-card" aria-hidden="true">
+      <div class="mini-card void-card">
+        <span class="mini-suit">🌀</span>
+        <span class="mini-rule">VOID</span>
+      </div>
+    </div>
+    <h1 class="game-title">VOID DECK</h1>
+    <p class="tagline">Every card can rewrite next round's rules</p>
+    <button id="play-btn" class="btn btn-primary" type="button">▶ PLAY</button>
+    <p class="howto">Duel the Void, 1v1. Higher card wins the round — but a Void card sacrifices the round to rewrite the NEXT round's rules. First to 0 HP loses.</p>
+    <p class="howto-sub">Click a card to play it — or press keys 1–7. The Void's hand is open — the Void reveals all hands.</p>
+  </section>
+
+  <!-- ============ GAME SCREEN ============ -->
+  <section id="game-screen" class="screen hidden">
+    <div id="table">
+      <!-- Opponent -->
+      <div id="opponent-area" class="player-area">
+        <div class="player-info">
+          <span class="player-name">THE VOID</span>
+          <span class="hp-wrap"><span class="hp-label">HP</span>
+            <span class="hp-bar"><span id="ai-hp-fill" class="hp-fill"></span></span>
+            <span id="ai-hp-text" class="hp-text">20</span>
+          </span>
+        </div>
+        <div id="ai-hand" class="hand ai-hand"></div>
+      </div>
+
+      <!-- Middle table -->
+      <div id="mid-table">
+        <div id="rule-banner" class="rule-banner hidden" role="status" aria-live="polite">
+          <span class="rule-banner-label">VOID RULE — NEXT ROUND:</span>
+          <span id="rule-banner-text" class="rule-banner-text"></span>
+        </div>
+        <div id="round-line"><span id="round-text">ROUND 1</span><span id="deck-text"></span></div>
+        <div id="played-area">
+          <div id="ai-played" class="played-slot"></div>
+          <div id="vs-badge">VS</div>
+          <div id="player-played" class="played-slot"></div>
+        </div>
+        <div id="message-line" aria-live="polite">Choose a card to play.</div>
+        <div id="combo-badge" class="combo-badge hidden">COMBO!</div>
+      </div>
+
+      <!-- Player -->
+      <div id="player-area" class="player-area">
+        <div class="player-info">
+          <span class="player-name">YOU</span>
+          <span class="hp-wrap"><span class="hp-label">HP</span>
+            <span class="hp-bar"><span id="player-hp-fill" class="hp-fill"></span></span>
+            <span id="player-hp-text" class="hp-text">20</span>
+          </span>
+        </div>
+        <div id="player-hand" class="hand player-hand"></div>
+      </div>
+    </div>
+    <div id="float-layer"></div>
+  </section>
+
+  <!-- ============ END SCREEN ============ -->
+  <section id="end-screen" class="screen hidden">
+    <h1 id="end-title" class="end-title"></h1>
+    <p id="end-subtitle" class="end-subtitle"></p>
+    <div id="end-stats" class="end-stats"></div>
+    <button id="again-btn" class="btn btn-primary" type="button">↻ PLAY AGAIN</button>
+  </section>
+
+</div>
+<script src="js/deck.js"></script>
+<script src="js/rules.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/render.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
